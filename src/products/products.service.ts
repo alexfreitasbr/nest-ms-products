@@ -4,6 +4,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma.service';
 import { PaginationDto } from 'src/common';
 import { RpcException } from '@nestjs/microservices';
+import { IS_MAC_ADDRESS } from 'class-validator';
 
 @Injectable()
 export class ProductsService {
@@ -72,5 +73,25 @@ export class ProductsService {
       },
     });
     return product;
+  }
+
+  async validateProduct(ids: number[]) {
+
+    const products = await this.prisma.product.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+        available: true,
+      },
+    });
+
+    if (ids.length !== products.length) {
+      throw new RpcException({
+        message: 'Some products were not found',
+        status: HttpStatus.BAD_REQUEST,
+      });
+    }
+    return products;
   }
 }

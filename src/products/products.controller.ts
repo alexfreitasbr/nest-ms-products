@@ -4,6 +4,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PaginationDto } from 'src/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { isReadableStreamLike } from 'rxjs/internal/util/isReadableStreamLike';
 
 @Controller('products')
 export class ProductsController {
@@ -37,5 +38,9 @@ export class ProductsController {
   @MessagePattern({ cmd: 'deleteProduct' })
   remove(@Payload('id', ParseIntPipe) id: number) {
     return this.productsService.remove(id);
+  }
+  @MessagePattern({ cmd: 'validateProducts' })
+  validateProduct(@Payload() ids: number[]) {
+    return this.productsService.validateProduct(ids);
   }
 }
