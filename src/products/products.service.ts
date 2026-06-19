@@ -10,9 +10,24 @@ export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createProductDto: CreateProductDto) {
-    return this.prisma.product.create({
-      data: createProductDto,
-    });
+    try {
+      return await this.prisma.product.create({
+        data: createProductDto,
+      });
+    } catch (error) {
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        error.code === 'P2002'
+      ) {
+        throw new RpcException({
+          message: `Product with name '${createProductDto.name}' already exists`,
+          status: HttpStatus.BAD_REQUEST,
+        });
+      }
+      throw error;
+    }
   }
 
   async findAll(paginationDto: PaginationDto) {
@@ -40,6 +55,8 @@ export class ProductsService {
   }
 
   async findOne(id: number) {
+    console.log('findOneProduct', id);
+
     const product = await this.prisma.product.findUnique({
       where: { id, available: true },
     });
