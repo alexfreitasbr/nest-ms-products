@@ -4,7 +4,6 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma.service';
 import { PaginationDto } from 'src/common';
 import { RpcException } from '@nestjs/microservices';
-import { IS_MAC_ADDRESS } from 'class-validator';
 
 @Injectable()
 export class ProductsService {
