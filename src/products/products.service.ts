@@ -55,7 +55,6 @@ export class ProductsService {
   }
 
   async findOne(id: number) {
-    console.log('findOneProduct', id);
 
     const product = await this.prisma.product.findUnique({
       where: { id, available: true },
